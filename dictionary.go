@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-type Dictionary []*Quote
+type Dictionary []Quote
 
 func (d *Dictionary) SelectBySpeaker(speaker string) *Dictionary {
 	var selected Dictionary
 	size := len(*d)
 
 	for i := 0; i < size; i++ {
-		if item := (*d)[i]; item.Speaker == speaker {
+		if item := (*d)[i]; item.Speaker() == speaker {
 			selected = append(selected, item)
 		}
 	}
@@ -33,7 +33,7 @@ func (d *Dictionary) SelectRandom() (*Quote, error) {
 	rand.Seed(time.Now().UnixNano())
 	idx := rand.Intn(size)
 
-	return (*d)[idx], nil
+	return &((*d)[idx]), nil
 }
 
 func NewDictionary(data []byte) (*Dictionary, error) {
@@ -55,7 +55,7 @@ func NewDictionary(data []byte) (*Dictionary, error) {
 	lineSize := len(body)
 	dictionary := make(Dictionary, lineSize)
 	for i := 0; i < lineSize; i++ {
-		dictionary[i] = &Quote{Speaker: body[i]["speaker"], Content: body[i]["quote"]}
+		dictionary[i] = body[i]
 	}
 
 	return &dictionary, nil
