@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+const Version = "0.1.1"
+
 type Options struct {
 	Version bool   `short:"v" long:"version" description:"Show version"`
 	File    string `short:"f" long:"file" description:"Specifies dictionary file path" value-name:"PATH"`
@@ -26,7 +28,7 @@ func run(args []string) int {
 	}
 
 	if options.Version {
-		fmt.Println("0.1.1")
+		fmt.Println(Version)
 		return 0
 	}
 
