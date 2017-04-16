@@ -8,14 +8,13 @@ import (
 	"time"
 )
 
-type Dictionary []Quote
+type Dictionary []map[string]string
 
 func (d *Dictionary) SelectBySpeaker(speaker string) *Dictionary {
 	var selected Dictionary
-	size := len(*d)
 
-	for i := 0; i < size; i++ {
-		if item := (*d)[i]; item.Speaker() == speaker {
+	for i := 0; i < len(*d); i++ {
+		if item := (*d)[i]; item["speaker"] == speaker {
 			selected = append(selected, item)
 		}
 	}
@@ -23,7 +22,7 @@ func (d *Dictionary) SelectBySpeaker(speaker string) *Dictionary {
 	return &selected
 }
 
-func (d *Dictionary) SelectRandom() (*Quote, error) {
+func (d *Dictionary) SelectRandom() (map[string]string, error) {
 	size := len(*d)
 
 	if size == 0 {
@@ -33,7 +32,7 @@ func (d *Dictionary) SelectRandom() (*Quote, error) {
 	rand.Seed(time.Now().UnixNano())
 	idx := rand.Intn(size)
 
-	return &((*d)[idx]), nil
+	return (*d)[idx], nil
 }
 
 func NewDictionary(data []byte) (*Dictionary, error) {
@@ -45,18 +44,12 @@ func NewDictionary(data []byte) (*Dictionary, error) {
 		return nil, err
 	}
 
-	meta, body := lines[0], lines[1:]
-
-	filetype, isExistsFiletypeKey := meta["filetype"]
+	filetype, isExistsFiletypeKey := lines[0]["filetype"]
 	if false == isExistsFiletypeKey || filetype != "polyaness_dict" {
 		return nil, fmt.Errorf("Invalid filetype")
 	}
 
-	lineSize := len(body)
-	dictionary := make(Dictionary, lineSize)
-	for i := 0; i < lineSize; i++ {
-		dictionary[i] = body[i]
-	}
+	dictionary := Dictionary(lines[1:])
 
 	return &dictionary, nil
 }

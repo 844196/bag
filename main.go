@@ -59,7 +59,7 @@ func run(args []string) int {
 		return 1
 	}
 
-	fmt.Println(quote.Content())
+	fmt.Println(quote["quote"])
 
 	return 0
 }
